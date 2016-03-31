@@ -17,7 +17,7 @@ public class BreakAPod extends ApplicationAdapter {
 	private SpriteBatch batch;
 
     static public ShaderProgram createDefaultShader() {
-        String vertexShader = "#version 330 core\n"
+        String vertexShader = "#version 330\n" // removed 'core' from the end
                 + "in vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
                 + "in vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
                 + "in vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
@@ -32,7 +32,7 @@ public class BreakAPod extends ApplicationAdapter {
                 + "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
                 + "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
                 + "}\n";
-        String fragmentShader = "#version 330 core\n"
+        String fragmentShader = "#version 330\n" // removed 'core' from the end
                 + "#ifdef GL_ES\n" //
                 + "#define LOWP lowp\n" //
                 + "precision mediump float;\n" //
