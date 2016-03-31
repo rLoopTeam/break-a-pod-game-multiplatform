@@ -2,14 +2,14 @@
 Repository for the multi platform version of the game
 
 # Requirements
-Not 100% sure what the requirements are.
-I installed Android Studio and Android SDK and that seems to be enough. Not sure about iOS
+Java SDK
+Android SDK
+Android Studio
 
-The project includes PC, Android and iOS versions
+Not sure what's needed for iOS
 
-Most of the code is written for the PC version and it can then be built for Android and iOS. 
+The project includes PC, Android and iOS packages so theoretically it should be easy to build for all platforms.
 
-The platform specific parts of the project are mostly for controls I think
 
 
 
