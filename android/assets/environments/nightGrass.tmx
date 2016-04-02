@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="8" tilewidth="48" tileheight="48" nextobjectid="1">
+ <tileset firstgid="1" name="ground" tilewidth="48" tileheight="48" tilecount="6" columns="6">
+  <image source="night_grass/night_grass.png" width="288" height="48"/>
+ </tileset>
+ <imagelayer name="background" offsetx="-425" offsety="-186">
+  <image source="night_grass/night_sky.png" width="800" height="600"/>
+  <properties>
+   <property name="fixedToCamera" type="bool" value="true"/>
+  </properties>
+ </imagelayer>
+ <layer name="ground" width="40" height="8" offsetx="-429" offsety="30">
+  <properties>
+   <property name="repeat" type="bool" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjALaAEYgZgJiZiBmAWJWIGYjQ5xWAAAjMABA
+  </data>
+ </layer>
+ <imagelayer name="skylight" offsetx="187" offsety="-120">
+  <image source="night_grass/moon.png" width="120" height="120"/>
+  <properties>
+   <property name="fixedToCamera" type="bool" value="true"/>
+  </properties>
+ </imagelayer>
+</map>

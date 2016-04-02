@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.mygdx.handlers.GameInput;
+import com.mygdx.handlers.GameInputProcessor;
 import com.mygdx.screen.ScreenManager;
 
 
@@ -14,7 +16,7 @@ public class BreakAPod extends ApplicationAdapter {
     public static final int SCALE = 2;
 
     public static final float STEP = 1 / 60f;
-    //private float accum;
+    private float accum;
 
     private SpriteBatch sb;
     private OrthographicCamera cam;
@@ -25,6 +27,7 @@ public class BreakAPod extends ApplicationAdapter {
 	@Override
 	public void create () {
 
+        Gdx.input.setInputProcessor(new GameInputProcessor());
         sb = new SpriteBatch();
         cam = new OrthographicCamera();
         cam.setToOrtho(false, WIDTH, HEIGHT);
@@ -38,15 +41,16 @@ public class BreakAPod extends ApplicationAdapter {
 	@Override
 	public void render () {
 
-//        accum += Gdx.graphics.getDeltaTime();
-//        while(accum >= STEP) {
-//            accum -= STEP;
-//            sm.update(STEP);
-//            sm.render();
-//        }
+        accum += Gdx.graphics.getDeltaTime();
+        while(accum >= STEP) {
+            accum -= STEP;
+            sm.update(STEP);
+            sm.render();
+            GameInput.update();
+        }
 
-        sm.update(Gdx.graphics.getDeltaTime());
-        sm.render();
+//        sm.update(Gdx.graphics.getDeltaTime());
+//        sm.render();
 
     }
 
