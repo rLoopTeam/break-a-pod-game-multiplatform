@@ -1,0 +1,155 @@
+{
+    "frames": {
+        "instructions.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 0, 
+                "x": 800, 
+                "w": 573, 
+                "h": 430
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 430, 
+                "w": 573
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 573, 
+                "h": 430
+            }
+        }, 
+        "distance_marker.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 600, 
+                "x": 992, 
+                "w": 4, 
+                "h": 20
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 20, 
+                "w": 4
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 4, 
+                "h": 20
+            }
+        }, 
+        "topUI.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 600, 
+                "x": 800, 
+                "w": 192, 
+                "h": 82
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 82, 
+                "w": 192
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 192, 
+                "h": 82
+            }
+        }, 
+        "health_percent.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 600, 
+                "x": 996, 
+                "w": 2, 
+                "h": 20
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 20, 
+                "w": 2
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 2, 
+                "h": 20
+            }
+        }, 
+        "UI.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 600, 
+                "x": 0, 
+                "w": 800, 
+                "h": 84
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 84, 
+                "w": 800
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 800, 
+                "h": 84
+            }
+        }, 
+        "instructions2.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 0, 
+                "x": 1373, 
+                "w": 556, 
+                "h": 140
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 140, 
+                "w": 556
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 556, 
+                "h": 140
+            }
+        }, 
+        "highscore_screen.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 0, 
+                "x": 0, 
+                "w": 800, 
+                "h": 600
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 600, 
+                "w": 800
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 800, 
+                "h": 600
+            }
+        }
+    }, 
+    "meta": {
+        "scale": "1", 
+        "format": "RGBA8888", 
+        "app": "http://www.arcticentertainment.com", 
+        "version": "1.0", 
+        "image": "texture_atlas.png", 
+        "size": {
+            "h": 2048, 
+            "w": 2048
+        }
+    }
+}

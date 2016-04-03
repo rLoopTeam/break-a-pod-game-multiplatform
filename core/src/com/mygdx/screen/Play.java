@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.entities.HUD;
 import com.mygdx.entities.Player;
 import com.mygdx.entities.PowerPickup;
 import com.mygdx.handlers.GameContactListener;
@@ -45,6 +46,8 @@ public class Play extends GameScreen {
     private Player player;
     private Array<PowerPickup> powerPickups;
 
+    private HUD hud;
+
     public Play(ScreenManager sm){
 
         super(sm);
@@ -68,6 +71,9 @@ public class Play extends GameScreen {
         b2dCam = new OrthographicCamera();
         b2dCam.setToOrtho(false, BreakAPod.WIDTH / B2DVars.PPM, BreakAPod.HEIGHT / B2DVars.PPM);
 
+        // set hud
+        hud = new HUD(player);
+
     }
 
     public void handleInput(){
@@ -86,8 +92,10 @@ public class Play extends GameScreen {
 
         handleInput();
 
+        // update box2d
         world.step(dt, 6, 1);
 
+        // remove powerups (must be after the world has updated)
         Array<Body> bodies = cl.getBodiesToRemove();
 
         for (int i = 0; i < bodies.size; i++) {
@@ -108,15 +116,33 @@ public class Play extends GameScreen {
     public void render(){
 
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // camera follow player
+        cam.position.set(
+                player.getPosition().x * B2DVars.PPM + BreakAPod.WIDTH / 4,
+                BreakAPod.WIDTH / 2 - 70,
+                0
+        );
+        cam.update();
+
+        // draw tilemap
         tmr.setView(cam);
         tmr.render();
-        if(debug) {
-            b2dr.render(world, b2dCam.combined);
-        }
+
+        // draw player
+        sb.setProjectionMatrix(cam.combined);
         player.render(sb);
 
         for (int i = 0; i < powerPickups.size; i++) {
             powerPickups.get(i).render(sb);
+        }
+
+        // draw hud
+        sb.setProjectionMatrix(hudCam.combined);
+        hud.render(sb);
+
+        if(debug) {
+            b2dr.render(world, b2dCam.combined);
         }
     }
 
