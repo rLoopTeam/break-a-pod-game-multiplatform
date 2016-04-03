@@ -15,10 +15,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.entities.Player;
+import com.mygdx.entities.PowerPickup;
 import com.mygdx.handlers.GameContactListener;
 import com.mygdx.handlers.GameInput;
 import com.mygdx.handlers.B2DVars;
@@ -26,6 +29,7 @@ import com.mygdx.rloop.BreakAPod;
 
 public class Play extends GameScreen {
 
+    private boolean debug = false;
     private BitmapFont font = new BitmapFont();
     private World world;
     private Box2DDebugRenderer b2dr;
@@ -39,6 +43,7 @@ public class Play extends GameScreen {
     private OrthogonalTiledMapRenderer tmr;
 
     private Player player;
+    private Array<PowerPickup> powerPickups;
 
     public Play(ScreenManager sm){
 
@@ -55,6 +60,9 @@ public class Play extends GameScreen {
 
         // create player
         createTiles();
+
+        // create power pickups
+        createPowerPickups();
 
         // set up box2d cam
         b2dCam = new OrthographicCamera();
@@ -75,9 +83,26 @@ public class Play extends GameScreen {
     }
 
     public void update(float dt){
+
         handleInput();
+
         world.step(dt, 6, 1);
+
+        Array<Body> bodies = cl.getBodiesToRemove();
+
+        for (int i = 0; i < bodies.size; i++) {
+            Body b = bodies.get(i);
+            powerPickups.removeValue((PowerPickup) b.getUserData(), true);
+            world.destroyBody(b);
+            player.collectPower();
+        }
+        bodies.clear();
+
         player.update(dt);
+
+        for (int i = 0; i < powerPickups.size; i++) {
+            powerPickups.get(i).update(dt);
+        }
     }
 
     public void render(){
@@ -85,13 +110,14 @@ public class Play extends GameScreen {
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
         tmr.setView(cam);
         tmr.render();
-        b2dr.render(world, b2dCam.combined);
+        if(debug) {
+            b2dr.render(world, b2dCam.combined);
+        }
         player.render(sb);
 
-        //text
-        sb.begin();
-        font.draw(sb, "play state", 100, 100);
-        sb.end();
+        for (int i = 0; i < powerPickups.size; i++) {
+            powerPickups.get(i).render(sb);
+        }
     }
 
     public void dispose(){
@@ -117,7 +143,7 @@ public class Play extends GameScreen {
         shape.setAsBox(player.getWidth() / 2 / B2DVars.PPM, player.getHeight() / 2 / B2DVars.PPM);
         fdef.shape = shape;
         fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
-        fdef.filter.maskBits = B2DVars.BIT_TUBE;
+        fdef.filter.maskBits = B2DVars.BIT_TUBE | B2DVars.BIT_PICKUP;
         body.createFixture(fdef).setUserData("player");
 
         // create foot sensor
@@ -181,6 +207,37 @@ public class Play extends GameScreen {
                 world.createBody(bdef).createFixture(fdef);
 
             }
+        }
+    }
+
+    private void createPowerPickups() {
+
+        powerPickups = new Array<PowerPickup>();
+
+        BodyDef bdef = new BodyDef();
+        FixtureDef fdef = new FixtureDef();
+
+        for (int i = 0; i < 10; i++) {
+
+            bdef.type = BodyType.StaticBody;
+            bdef.position.set(((i * 80) + 120) / B2DVars.PPM, 140 / B2DVars.PPM);
+
+            CircleShape cshape = new CircleShape();
+            cshape.setRadius(35/B2DVars.PPM);
+
+            fdef.shape = cshape;
+            fdef.isSensor = true;
+            fdef.filter.categoryBits = B2DVars.BIT_PICKUP;
+            fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+
+            Body body = world.createBody(bdef);
+            body.createFixture(fdef).setUserData("powerpickup");
+
+            PowerPickup p = new PowerPickup(body);
+            powerPickups.add(p);
+
+            body.setUserData(p);
+
         }
     }
 }

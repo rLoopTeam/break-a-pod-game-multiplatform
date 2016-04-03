@@ -35,6 +35,7 @@ public class BreakAPod extends ApplicationAdapter {
 
         res = new Content();
         res.loadTexture("rPod.png", "pod");
+        res.loadTexture("power_pickup.png", "powerpickup");
 
         sb = new SpriteBatch();
         cam = new OrthographicCamera();
