@@ -1,11 +1,18 @@
 package com.mygdx.screen;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSets;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -23,6 +30,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.entities.HUD;
 import com.mygdx.entities.Player;
 import com.mygdx.entities.PowerPickup;
@@ -134,12 +143,15 @@ public class Play extends GameScreen {
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // camera follow player
-        cam.position.set(
-                player.getPosition().x * B2DVars.PPM + BreakAPod.WIDTH / 4,
-                BreakAPod.WIDTH / 2 - 70,
-                0
-        );
+        cam.position.set( player.getPosition().x * B2DVars.PPM + BreakAPod.WIDTH / 4, BreakAPod.WIDTH / 2 - 70, 0 );
         cam.update();
+
+        // draw bgs
+        sb.setProjectionMatrix(hudCam.combined);
+        for(int i = 0; i < backgrounds.length; i++) {
+            if(backgrounds[i] != null)
+                backgrounds[i].render(sb);
+        }
 
         // draw tilemap
         //tmr.setView(cam);
@@ -201,39 +213,74 @@ public class Play extends GameScreen {
     }
 
     private void createBackground() {
+
+        // set the environment id to the select environment
+        String environmentId = "night_grass";
+        Texture bgs = BreakAPod.res.getTexture(environmentId);
+        JsonValue bgsatlas = BreakAPod.res.getAtlas(environmentId);
+        JsonValue frames = bgsatlas.get("frames");
+
         // load tile map
-        tiledMap = new TmxMapLoader().load("environments/nightGrass.tmx");
-        tmr = new OrthogonalTiledMapRenderer(tiledMap);
-        tileSize = (int) tiledMap.getProperties().get("tilewidth", Integer.class);
+        tiledMap = new TmxMapLoader().load("environments/night_grass/night_grass_map.tmx");
 
-        TiledMapTileLayer layer;
+        //tmr = new OrthogonalTiledMapRenderer(tiledMap);
+        //tileSize = (int) tiledMap.getProperties().get("tilewidth", Integer.class);
 
-        layer = (TiledMapTileLayer) tiledMap.getLayers().get("ground");
-        createLayer(layer, B2DVars.BIT_TUBE);
+        //TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get("ground");
+        //createLayer(layer, B2DVars.BIT_TUBE);
 
-        MapLayers layers = tmr.getMap().getLayers();
-        int count = layers.getCount();
-        for (int i = 0; i < count; i++) {
+        TiledMapTileSet tileset = tiledMap.getTileSets().getTileSet(0);
+        MapLayers layers = tiledMap.getLayers();
+
+        int backgroundCount = layers.getCount();
+        backgrounds = new Background[backgroundCount];
+
+        for (int i = 0; i < backgroundCount; i++) {
+
+            // properties
             MapLayer cLayer = layers.get(i);
-            if(cLayer.getProperties().get("fixedToCamera") != null) {
-                System.out.println(cLayer.getName());
+            boolean fixedToCamera = (cLayer.getProperties().get("fixedToCamera") != null);
+            boolean repeat = (cLayer.getProperties().get("repeat") != null);
+
+            // iterate over objects i layer
+            MapObjects objects = cLayer.getObjects();
+            int objectTotal = objects.getCount();
+
+            for (int j = 0; j < objectTotal; j++) {
+
+                // get object properties like gid, position etc
+                MapProperties properties = objects.get(j).getProperties();
+                int gid = (Integer)properties.get("gid");
+                Float x = (Float)properties.get("x");
+                Float y = (Float)properties.get("y");
+
+                float parallax = 0.0f;
+                if (properties.get("parallax") != null)
+                    parallax = Float.parseFloat(properties.get("parallax").toString());
+
+                // get the texture name of the object so we can use it to render the object
+                String textureName = ((FileTextureData)tileset.getTile(gid).getTextureRegion().getTexture().getTextureData()).getFileHandle().name();
+                JsonValue frame = frames.get(textureName).get("frame");
+
+                System.out.println(i + ": " + j + "- GID: " + gid + ", textureName: " + textureName);
+                System.out.println(i + ": Map Propperties - x:" + x + ", y:" + y  + ", parallax:" + parallax);
+                System.out.println(i + ": Atlas properties - x:" + frame.getInt("x") + ", y:" + frame.getInt("y") + ", w:" + frame.getInt("w") + ", h:" + frame.getInt("h"));
+
+                TextureRegion backgroundRegion = new TextureRegion(bgs,
+                        frame.getInt("x"), // x
+                        frame.getInt("y"), // y
+                        frame.getInt("w"), // W
+                        frame.getInt("h")); // h
+                backgrounds[i] = new Background(backgroundRegion, cam, parallax, repeat, false);
 
             }
-
-//            // create backgrounds
-//            Texture bgs = Game.res.getTexture("bgs");
-//            TextureRegion sky = new TextureRegion(bgs, 0, 0, 320, 240);
-//            TextureRegion clouds = new TextureRegion(bgs, 0, 240, 320, 240);
-//            TextureRegion mountains = new TextureRegion(bgs, 0, 480, 320, 240);
-//            backgrounds = new Background[3];
-//            backgrounds[0] = new Background(sky, cam, 0f);
-//            backgrounds[1] = new Background(clouds, cam, 0.1f);
-//            backgrounds[2] = new Background(mountains, cam, 0.2f);
         }
 
     }
 
     private void updateBackground() {
+
+
 
     }
 

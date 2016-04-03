@@ -19,12 +19,12 @@ public class Background {
     private float dx;
     private float dy;
 
-    public Background(TextureRegion image, OrthographicCamera gameCam, float scale) {
+    public Background(TextureRegion image, OrthographicCamera gameCam, float scale, boolean repeatX, boolean repeatY) {
         this.image = image;
         this.gameCam = gameCam;
         this.scale = scale;
-        numDrawX = BreakAPod.WIDTH / image.getRegionWidth() + 1;
-        numDrawY = BreakAPod.HEIGHT / image.getRegionHeight() + 1;
+        numDrawX = (repeatX) ? BreakAPod.WIDTH / image.getRegionWidth() + 1 : 1;
+        numDrawY = (repeatY) ? BreakAPod.HEIGHT / image.getRegionHeight() + 1 : 1;
     }
 
     public void setVector(float dx, float dy) {

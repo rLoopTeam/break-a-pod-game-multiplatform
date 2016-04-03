@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="14" tilewidth="48" tileheight="48" nextobjectid="7">
+ <tileset firstgid="1" name="night_grass_tileset" tilewidth="800" tileheight="600" tilecount="3" columns="0">
+  <tile id="2">
+   <image width="800" height="600" source="night_sky.png"/>
+  </tile>
+  <tile id="3">
+   <image width="288" height="48" source="night_grass.png"/>
+  </tile>
+  <tile id="4">
+   <image width="120" height="120" source="moon.png"/>
+  </tile>
+ </tileset>
+ <objectgroup name="sky">
+  <object id="5" gid="3" x="0" y="600" width="800" height="600"/>
+ </objectgroup>
+ <objectgroup name="ground">
+  <properties>
+   <property name="repeat" type="bool" value="true"/>
+  </properties>
+  <object id="4" gid="4" x="0" y="624" width="288" height="48">
+   <properties>
+    <property name="parallax" type="float" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="skylight">
+  <object id="6" gid="5" x="570" y="196" width="120" height="120"/>
+ </objectgroup>
+</map>

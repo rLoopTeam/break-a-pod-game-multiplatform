@@ -1,0 +1,75 @@
+{
+    "frames": {
+        "night_sky.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 0, 
+                "x": 0, 
+                "w": 800, 
+                "h": 600
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 600, 
+                "w": 800
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 800, 
+                "h": 600
+            }
+        }, 
+        "moon.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 0, 
+                "x": 800, 
+                "w": 120, 
+                "h": 120
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 120, 
+                "w": 120
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 120, 
+                "h": 120
+            }
+        }, 
+        "night_grass.png": {
+            "trimmed": "false", 
+            "frame": {
+                "y": 0, 
+                "x": 920, 
+                "w": 288, 
+                "h": 48
+            }, 
+            "rotated": "false", 
+            "sourceSize": {
+                "h": 48, 
+                "w": 288
+            }, 
+            "spriteSourceSize": {
+                "y": 0, 
+                "x": 0, 
+                "w": 288, 
+                "h": 48
+            }
+        }
+    }, 
+    "meta": {
+        "scale": "1", 
+        "format": "RGBA8888", 
+        "app": "http://www.arcticentertainment.com", 
+        "version": "1.0", 
+        "image": "texture_atlas.png", 
+        "size": {
+            "h": 2048, 
+            "w": 2048
+        }
+    }
+}
