@@ -4,7 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.mygdx.handlers.Content;
 import com.mygdx.handlers.GameInput;
 import com.mygdx.handlers.GameInputProcessor;
 import com.mygdx.screen.ScreenManager;
@@ -12,10 +12,12 @@ import com.mygdx.screen.ScreenManager;
 
 public class BreakAPod extends ApplicationAdapter {
 
-    public static final int WIDTH = 320, HEIGHT = 240;
-    public static final int SCALE = 2;
-
+    public static final int WIDTH = 800, HEIGHT = 600;
+    public static final int SCALE = 1;
     public static final float STEP = 1 / 60f;
+
+    public static final int PLAYER_SPEED = 4;
+
     private float accum;
 
     private SpriteBatch sb;
@@ -24,10 +26,16 @@ public class BreakAPod extends ApplicationAdapter {
 
     private ScreenManager sm;
 
+    public static Content res;
+
 	@Override
 	public void create () {
 
         Gdx.input.setInputProcessor(new GameInputProcessor());
+
+        res = new Content();
+        res.loadTexture("rPod.png", "pod");
+
         sb = new SpriteBatch();
         cam = new OrthographicCamera();
         cam.setToOrtho(false, WIDTH, HEIGHT);
@@ -48,6 +56,9 @@ public class BreakAPod extends ApplicationAdapter {
             sm.render();
             GameInput.update();
         }
+
+        sb.setProjectionMatrix(hudCam.combined);
+
 
 //        sm.update(Gdx.graphics.getDeltaTime());
 //        sm.render();

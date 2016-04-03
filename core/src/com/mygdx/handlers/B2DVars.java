@@ -7,6 +7,6 @@ public class B2DVars {
     // in binary 0001, 0010, 0100, 1000 etc
     public static final short BIT_TUBE = 2;
     public static final short BIT_PLAYER = 4;
-    public static final short BIT_PICKUP = 4;
+    public static final short BIT_PICKUP = 8;
 
 }
