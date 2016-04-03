@@ -1,5 +1,8 @@
 package com.mygdx.screen;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -23,30 +26,38 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.entities.HUD;
 import com.mygdx.entities.Player;
 import com.mygdx.entities.PowerPickup;
+import com.mygdx.handlers.Background;
 import com.mygdx.handlers.GameContactListener;
 import com.mygdx.handlers.GameInput;
 import com.mygdx.handlers.B2DVars;
 import com.mygdx.rloop.BreakAPod;
 
+import java.util.Iterator;
+
 public class Play extends GameScreen {
 
     private boolean debug = false;
-    private BitmapFont font = new BitmapFont();
-    private World world;
-    private Box2DDebugRenderer b2dr;
 
+    private World world;
+    private GameContactListener cl;
+    private Box2DDebugRenderer b2dr;
     private OrthographicCamera b2dCam;
 
-    private GameContactListener cl;
+    private Player player;
 
     private TiledMap tiledMap;
     private float tileSize;
     private OrthogonalTiledMapRenderer tmr;
 
-    private Player player;
     private Array<PowerPickup> powerPickups;
 
+    private Background[] backgrounds;
     private HUD hud;
+
+    // font
+    private BitmapFont font = new BitmapFont();
+
+    public static int level;
 
     public Play(ScreenManager sm){
 
@@ -62,17 +73,18 @@ public class Play extends GameScreen {
         createPlayer();
 
         // create player
-        createTiles();
+        createBackground();
 
         // create power pickups
         createPowerPickups();
+
+        // set hud
+        hud = new HUD(player);
 
         // set up box2d cam
         b2dCam = new OrthographicCamera();
         b2dCam.setToOrtho(false, BreakAPod.WIDTH / B2DVars.PPM, BreakAPod.HEIGHT / B2DVars.PPM);
 
-        // set hud
-        hud = new HUD(player);
 
     }
 
@@ -86,16 +98,6 @@ public class Play extends GameScreen {
         if(GameInput.isPressed(GameInput.BUTTON2)) {
             System.out.println("x");
         }
-
-//        if(BBInput.isPressed()) {
-//            if(BBInput.x  Gdx.graphics.getWidth() / 2) {
-//
-//            } else {
-//                if(cl.isPlayerOnGround()) {
-//                    player.getBody().applyForceToCenter(0, 200, true);
-//                }
-//            }
-//        }
     }
 
     public void update(float dt){
@@ -116,6 +118,10 @@ public class Play extends GameScreen {
         }
         bodies.clear();
 
+        // update background
+        updateBackground();
+
+        // update player
         player.update(dt);
 
         for (int i = 0; i < powerPickups.size; i++) {
@@ -136,8 +142,8 @@ public class Play extends GameScreen {
         cam.update();
 
         // draw tilemap
-        tmr.setView(cam);
-        tmr.render();
+        //tmr.setView(cam);
+        //tmr.render();
 
         // draw player
         sb.setProjectionMatrix(cam.combined);
@@ -194,7 +200,7 @@ public class Play extends GameScreen {
         shape.dispose();
     }
 
-    private void createTiles() {
+    private void createBackground() {
         // load tile map
         tiledMap = new TmxMapLoader().load("environments/nightGrass.tmx");
         tmr = new OrthogonalTiledMapRenderer(tiledMap);
@@ -204,7 +210,33 @@ public class Play extends GameScreen {
 
         layer = (TiledMapTileLayer) tiledMap.getLayers().get("ground");
         createLayer(layer, B2DVars.BIT_TUBE);
+
+        MapLayers layers = tmr.getMap().getLayers();
+        int count = layers.getCount();
+        for (int i = 0; i < count; i++) {
+            MapLayer cLayer = layers.get(i);
+            if(cLayer.getProperties().get("fixedToCamera") != null) {
+                System.out.println(cLayer.getName());
+
+            }
+
+//            // create backgrounds
+//            Texture bgs = Game.res.getTexture("bgs");
+//            TextureRegion sky = new TextureRegion(bgs, 0, 0, 320, 240);
+//            TextureRegion clouds = new TextureRegion(bgs, 0, 240, 320, 240);
+//            TextureRegion mountains = new TextureRegion(bgs, 0, 480, 320, 240);
+//            backgrounds = new Background[3];
+//            backgrounds[0] = new Background(sky, cam, 0f);
+//            backgrounds[1] = new Background(clouds, cam, 0.1f);
+//            backgrounds[2] = new Background(mountains, cam, 0.2f);
+        }
+
     }
+
+    private void updateBackground() {
+
+    }
+
 
     private void createLayer(TiledMapTileLayer layer, short bits) {
 
