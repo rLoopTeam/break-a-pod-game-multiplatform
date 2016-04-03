@@ -86,6 +86,16 @@ public class Play extends GameScreen {
         if(GameInput.isPressed(GameInput.BUTTON2)) {
             System.out.println("x");
         }
+
+//        if(BBInput.isPressed()) {
+//            if(BBInput.x  Gdx.graphics.getWidth() / 2) {
+//
+//            } else {
+//                if(cl.isPlayerOnGround()) {
+//                    player.getBody().applyForceToCenter(0, 200, true);
+//                }
+//            }
+//        }
     }
 
     public void update(float dt){
@@ -93,7 +103,7 @@ public class Play extends GameScreen {
         handleInput();
 
         // update box2d
-        world.step(dt, 6, 1);
+        world.step(BreakAPod.STEP, 6, 1);
 
         // remove powerups (must be after the world has updated)
         Array<Body> bodies = cl.getBodiesToRemove();
@@ -180,7 +190,8 @@ public class Play extends GameScreen {
         fdef.isSensor = true;
         body.createFixture(fdef).setUserData("foot");
 
-
+        // dispose shape
+        shape.dispose();
     }
 
     private void createTiles() {
@@ -232,6 +243,8 @@ public class Play extends GameScreen {
                 fdef.isSensor = false;
                 world.createBody(bdef).createFixture(fdef);
 
+                cs.dispose();
+
             }
         }
     }
@@ -264,6 +277,8 @@ public class Play extends GameScreen {
 
             body.setUserData(p);
 
+            // dispose shape
+            cshape.dispose();
         }
     }
 }

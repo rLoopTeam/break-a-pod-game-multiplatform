@@ -18,8 +18,6 @@ public class BreakAPod extends ApplicationAdapter {
 
     public static final int PLAYER_SPEED = 4;
 
-    private float accum;
-
     private SpriteBatch sb;
     private OrthographicCamera cam;
     private OrthographicCamera hudCam;
@@ -51,19 +49,9 @@ public class BreakAPod extends ApplicationAdapter {
 	@Override
 	public void render () {
 
-        accum += Gdx.graphics.getDeltaTime();
-        while(accum >= STEP) {
-            accum -= STEP;
-            sm.update(STEP);
-            sm.render();
-            GameInput.update();
-        }
-
+        sm.update(Gdx.graphics.getDeltaTime());
+        sm.render();
         sb.setProjectionMatrix(hudCam.combined);
-
-
-//        sm.update(Gdx.graphics.getDeltaTime());
-//        sm.render();
 
     }
 

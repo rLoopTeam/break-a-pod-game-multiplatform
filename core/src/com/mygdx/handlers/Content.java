@@ -1,6 +1,8 @@
 package com.mygdx.handlers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.HashMap;
@@ -8,9 +10,13 @@ import java.util.HashMap;
 public class Content {
 
     private  HashMap<String, Texture> textures;
+    private  HashMap<String, Music> music;
+    private  HashMap<String, Sound> sounds;
 
     public Content() {
         textures = new HashMap<String, Texture>();
+        music = new HashMap<String, Music>();
+        sounds = new HashMap<String, Sound>();
     }
 
     public void loadTexture(String path, String key) {
