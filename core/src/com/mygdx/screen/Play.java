@@ -35,6 +35,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.entities.HUD;
 import com.mygdx.entities.Player;
 import com.mygdx.entities.PowerPickup;
+import com.mygdx.entities.Tube;
 import com.mygdx.handlers.Background;
 import com.mygdx.handlers.GameContactListener;
 import com.mygdx.handlers.GameInput;
@@ -45,14 +46,16 @@ import java.util.Iterator;
 
 public class Play extends GameScreen {
 
-    private boolean debug = false;
+    private boolean debug = true;
 
     private World world;
     private GameContactListener cl;
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera b2dCam;
 
+    private Tube tube;
     private Player player;
+    private Vector2 startingPosition = new Vector2(160 / B2DVars.PPM, 200 / B2DVars.PPM);
 
     private TiledMap tiledMap;
     private float tileSize;
@@ -78,8 +81,11 @@ public class Play extends GameScreen {
         world.setContactListener(cl);
         b2dr = new Box2DDebugRenderer();
 
+        // create tube
+        createTube(startingPosition);
+
         // create player
-        createPlayer();
+        createPlayer(startingPosition);
 
         // create player
         createBackground();
@@ -143,7 +149,7 @@ public class Play extends GameScreen {
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // camera follow player
-        cam.position.set( player.getPosition().x * B2DVars.PPM + BreakAPod.WIDTH / 4, BreakAPod.WIDTH / 2 - 70, 0 );
+        cam.position.set(player.getPosition().x * B2DVars.PPM + BreakAPod.WIDTH / 4, BreakAPod.WIDTH / 2 - 70, 0);
         cam.update();
 
         // draw bgs
@@ -159,8 +165,10 @@ public class Play extends GameScreen {
 
         // draw player
         sb.setProjectionMatrix(cam.combined);
+        tube.render(sb);
         player.render(sb);
 
+        // draw pickups
         for (int i = 0; i < powerPickups.size; i++) {
             powerPickups.get(i).render(sb);
         }
@@ -178,14 +186,14 @@ public class Play extends GameScreen {
 
     }
 
-    private void createPlayer() {
+    private void createPlayer(Vector2 startingPos) {
 
         //// PLAYER
         BodyDef bdef = new BodyDef();
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
 
-        bdef.position.set(160 / B2DVars.PPM, 200 / B2DVars.PPM);
+        bdef.position.set(startingPos.x, startingPos.y);
         bdef.type = BodyType.DynamicBody;
         bdef.linearVelocity.set(BreakAPod.PLAYER_SPEED, 0);
         Body body = world.createBody(bdef);
@@ -271,19 +279,87 @@ public class Play extends GameScreen {
                         frame.getInt("y"), // y
                         frame.getInt("w"), // W
                         frame.getInt("h")); // h
-                backgrounds[i] = new Background(backgroundRegion, cam, parallax, repeat, false);
+                Background background = new Background(backgroundRegion, cam, parallax, repeat, false);
+                background.setPosition(x, y);
+                backgrounds[i] = background;
+
 
             }
         }
 
     }
 
-    private void updateBackground() {
+//    //// PLAYER
+//    BodyDef bdef = new BodyDef();
+//    FixtureDef fdef = new FixtureDef();
+//    PolygonShape shape = new PolygonShape();
+//
+//    bdef.position.set(startingPos.x, startingPos.y);
+//    bdef.type = BodyType.DynamicBody;
+//    bdef.linearVelocity.set(BreakAPod.PLAYER_SPEED, 0);
+//    Body body = world.createBody(bdef);
+//
+//    // create player
+//    player = new Player(body);
+//    body.setUserData(player);
+//
+//    shape.setAsBox(player.getWidth() / 2 / B2DVars.PPM, player.getHeight() / 2 / B2DVars.PPM);
+//    fdef.shape = shape;
+//    fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
+//    fdef.filter.maskBits = B2DVars.BIT_TUBE | B2DVars.BIT_PICKUP;
+//    body.createFixture(fdef).setUserData("player");
+//
+//    // create foot sensor
+//    shape.setAsBox(player.getWidth() / 2 / B2DVars.PPM, 4 / B2DVars.PPM, new Vector2(0, -(player.getHeight() + 2) / 2 / B2DVars.PPM), 0);
+//    fdef.shape = shape;
+//    fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
+//    fdef.filter.maskBits = B2DVars.BIT_TUBE;
+//    fdef.isSensor = true;
+//    body.createFixture(fdef).setUserData("foot");
+//
+//    // dispose shape
+//    shape.dispose();
 
+    private void createTube(Vector2 startingPos) {
 
+        tube = new Tube(startingPos);
+        BodyDef bdef = new BodyDef();
+        FixtureDef fdef = new FixtureDef();
+
+        int resolution = 50; // pixels per section
+        int totalSections = 20;
+        int tubeWidth = 300;
+        int startLength = 200;
+
+        for(int i = 0; i < totalSections; i++) {
+
+            bdef.type = BodyType.StaticBody;
+            bdef.position.set(
+                    (startingPos.x - startLength + ((i + 0.5f) * resolution)) / B2DVars.PPM,
+                    (startingPos.y - ((tubeWidth/2)) / B2DVars.PPM)
+                    //(i + 0.5f) * resolution / B2DVars.PPM
+            );
+
+            ChainShape cs = new ChainShape();
+            Vector2[] v = new Vector2[]{
+                    new Vector2( -resolution / 2 / B2DVars.PPM, -resolution / 2 / B2DVars.PPM),
+                    new Vector2( -resolution / 2 / B2DVars.PPM, resolution / 2 / B2DVars.PPM),
+                    new Vector2( resolution / 2 / B2DVars.PPM, resolution / 2 / B2DVars.PPM)
+            };
+
+            cs.createChain(v);
+            fdef.friction = 0;
+            fdef.shape = cs;
+            fdef.filter.categoryBits = B2DVars.BIT_TUBE;
+            fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+            fdef.isSensor = false;
+            world.createBody(bdef).createFixture(fdef);
+
+            cs.dispose();
+
+        }
 
     }
-
 
     private void createLayer(TiledMapTileLayer layer, short bits) {
 
@@ -360,4 +436,11 @@ public class Play extends GameScreen {
             cshape.dispose();
         }
     }
+
+    private void updateBackground() {
+
+
+
+    }
+
 }

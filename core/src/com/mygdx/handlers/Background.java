@@ -27,6 +27,12 @@ public class Background {
         numDrawY = (repeatY) ? BreakAPod.HEIGHT / image.getRegionHeight() + 1 : 1;
     }
 
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+        System.out.println("SET POSITION x: " + this.x + ", y:" +this.y);
+    }
+
     public void setVector(float dx, float dy) {
         this.dx = dx;
         this.dy = dy;
@@ -51,6 +57,7 @@ public class Background {
                 sb.draw(image, x + (col + colOffset) * image.getRegionWidth(), y + (rowOffset + row) * image.getRegionHeight());
             }
         }
+        System.out.println("x: " + this.x + ", y:" +this.y);
 
         sb.end();
 
