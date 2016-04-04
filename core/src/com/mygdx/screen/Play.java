@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSets;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -42,7 +43,6 @@ import com.mygdx.handlers.GameInput;
 import com.mygdx.handlers.B2DVars;
 import com.mygdx.rloop.BreakAPod;
 
-import java.util.Iterator;
 
 public class Play extends GameScreen {
 
@@ -113,6 +113,11 @@ public class Play extends GameScreen {
         if(GameInput.isPressed(GameInput.BUTTON2)) {
             System.out.println("x");
         }
+
+        if(GameInput.isPressed(GameInput.EXIT)) {
+            System.out.println("exit");
+            Gdx.app.exit();
+        }
     }
 
     public void update(float dt){
@@ -155,13 +160,14 @@ public class Play extends GameScreen {
         // draw bgs
         sb.setProjectionMatrix(hudCam.combined);
         for(int i = 0; i < backgrounds.length; i++) {
-            if(backgrounds[i] != null)
+            if(backgrounds[i] != null) {
                 backgrounds[i].render(sb);
+            }
         }
 
         // draw tilemap
-        //tmr.setView(cam);
-        //tmr.render();
+        tmr.setView(cam);
+        tmr.render();
 
         // draw player
         sb.setProjectionMatrix(cam.combined);
@@ -175,7 +181,7 @@ public class Play extends GameScreen {
 
         // draw hud
         sb.setProjectionMatrix(hudCam.combined);
-        hud.render(sb);
+        //hud.render(sb);
 
         if(debug) {
             b2dr.render(world, b2dCam.combined);
@@ -231,7 +237,7 @@ public class Play extends GameScreen {
         // load tile map
         tiledMap = new TmxMapLoader().load("environments/night_grass/night_grass_map.tmx");
 
-        //tmr = new OrthogonalTiledMapRenderer(tiledMap);
+        tmr = new OrthogonalTiledMapRenderer(tiledMap);
         //tileSize = (int) tiledMap.getProperties().get("tilewidth", Integer.class);
 
         //TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get("ground");
@@ -248,7 +254,8 @@ public class Play extends GameScreen {
             // properties
             MapLayer cLayer = layers.get(i);
             boolean fixedToCamera = (cLayer.getProperties().get("fixedToCamera") != null);
-            boolean repeat = (cLayer.getProperties().get("repeat") != null);
+            boolean repeatx = (cLayer.getProperties().get("repeatx") != null);
+            boolean unique = (cLayer.getProperties().get("unique") != null);
 
             // iterate over objects i layer
             MapObjects objects = cLayer.getObjects();
@@ -279,10 +286,11 @@ public class Play extends GameScreen {
                         frame.getInt("y"), // y
                         frame.getInt("w"), // W
                         frame.getInt("h")); // h
-                Background background = new Background(backgroundRegion, cam, parallax, repeat, false);
+
+                // create a background type correct type
+                Background background = new Background(backgroundRegion, cam, parallax, repeatx, false);
                 background.setPosition(x, y);
                 backgrounds[i] = background;
-
 
             }
         }
@@ -330,24 +338,41 @@ public class Play extends GameScreen {
         int totalSections = 20;
         int tubeWidth = 300;
         int startLength = 200;
+        float freq = 10f;
+        float prevx;
+        float prevy;
+        float x;
+        float y;
 
-        for(int i = 0; i < totalSections; i++) {
+        prevx = startingPos.x - startLength;
+        prevy = (startingPos.y + tubeWidth) - (tubeWidth/2);
+
+        for(int i = 1; i < totalSections; i++) {
+
+            x = startingPos.x - startLength + ((i + 0.5f) * resolution) ;
+            y = (startingPos.y + tubeWidth + (MathUtils.sinDeg(i*freq) * tubeWidth)) - (tubeWidth/2);
 
             bdef.type = BodyType.StaticBody;
             bdef.position.set(
-                    (startingPos.x - startLength + ((i + 0.5f) * resolution)) / B2DVars.PPM,
-                    (startingPos.y - ((tubeWidth/2)) / B2DVars.PPM)
+                    x / B2DVars.PPM,
+                    y / B2DVars.PPM
                     //(i + 0.5f) * resolution / B2DVars.PPM
             );
 
             ChainShape cs = new ChainShape();
             Vector2[] v = new Vector2[]{
-                    new Vector2( -resolution / 2 / B2DVars.PPM, -resolution / 2 / B2DVars.PPM),
-                    new Vector2( -resolution / 2 / B2DVars.PPM, resolution / 2 / B2DVars.PPM),
-                    new Vector2( resolution / 2 / B2DVars.PPM, resolution / 2 / B2DVars.PPM)
+                    new Vector2( -resolution / B2DVars.PPM, -resolution / 2 / B2DVars.PPM),
+                    new Vector2( prevx / B2DVars.PPM, prevy / B2DVars.PPM ),
+                    new Vector2( x / B2DVars.PPM, y / B2DVars.PPM )
+//                    new Vector2( -resolution / 2 / B2DVars.PPM, -resolution / 2 / B2DVars.PPM),
+//                    new Vector2( -resolution / 2 / B2DVars.PPM, resolution / 2 / B2DVars.PPM),
+//                    new Vector2( resolution / 2 / B2DVars.PPM, resolution / 2 / B2DVars.PPM)
             };
-
             cs.createChain(v);
+
+            prevx = x;
+            prevy = y;
+
             fdef.friction = 0;
             fdef.shape = cs;
             fdef.filter.categoryBits = B2DVars.BIT_TUBE;
