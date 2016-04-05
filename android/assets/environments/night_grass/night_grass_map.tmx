@@ -12,25 +12,25 @@
   </tile>
  </tileset>
  <objectgroup name="sky">
-  <properties>
-   <property name="unique" type="bool" value="true"/>
-  </properties>
-  <object id="5" gid="3" x="0" y="600" width="800" height="600"/>
+  <object id="5" gid="3" x="0" y="600" width="800" height="600">
+   <properties>
+    <property name="parallax" type="float" value="0"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="ground">
-  <properties>
-   <property name="repeatx" type="bool" value="true"/>
-  </properties>
   <object id="4" gid="4" x="0" y="600" width="288" height="48">
    <properties>
     <property name="parallax" type="float" value="1"/>
+    <property name="repeat" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup name="skylight">
-  <properties>
-   <property name="unique" type="bool" value="true"/>
-  </properties>
-  <object id="6" gid="5" x="570" y="196" width="120" height="120"/>
+  <object id="6" gid="5" x="570" y="196" width="120" height="120">
+   <properties>
+    <property name="parallax" type="float" value="0"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

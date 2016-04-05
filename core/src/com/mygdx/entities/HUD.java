@@ -33,7 +33,7 @@ public class HUD {
 
         sb.begin();
         sb.draw(elements[0], 0, BreakAPod.HEIGHT - elements[0].getRegionHeight()); //top UI
-        sb.draw(elements[1], 0, 0); //bottom UI
+        sb.draw(elements[1], 0, elements[1].getRegionHeight() -80); //bottom UI
         sb.end();
 
     }

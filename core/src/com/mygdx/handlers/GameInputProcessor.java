@@ -12,9 +12,6 @@ public class GameInputProcessor extends InputAdapter {
         if(k == Keys.X) {
             GameInput.setKey(GameInput.BUTTON2, true);
         }
-        if(k == Keys.ESCAPE) {
-            GameInput.setKey(GameInput.EXIT, true);
-        }
         return true;
     }
 
@@ -24,9 +21,6 @@ public class GameInputProcessor extends InputAdapter {
         }
         if(k == Keys.X) {
             GameInput.setKey(GameInput.BUTTON2, false);
-        }
-        if(k == Keys.ESCAPE) {
-            GameInput.setKey(GameInput.EXIT, false);
         }
         return true;
     }

@@ -9,9 +9,6 @@ import com.mygdx.handlers.GameInput;
 import com.mygdx.handlers.GameInputProcessor;
 import com.mygdx.screen.ScreenManager;
 
-import java.sql.Array;
-import java.util.List;
-
 
 public class BreakAPod extends ApplicationAdapter {
 
@@ -39,16 +36,11 @@ public class BreakAPod extends ApplicationAdapter {
         res.loadTexture("power_pickup.png", "powerpickup");
         res.loadTexture("UI/UI_atlas.png", "hud");
 
-        // environments
-        res.loadTexture("environments/night_grass/night_grass_atlas.png", "night_grass");
-        res.loadAtlas("environments/night_grass/night_grass_atlas.json", "night_grass");
-
+        sb = new SpriteBatch();
         cam = new OrthographicCamera();
         cam.setToOrtho(false, WIDTH, HEIGHT);
         hudCam = new OrthographicCamera();
         hudCam.setToOrtho(false, WIDTH, HEIGHT);
-
-        sb = new SpriteBatch();
 
         sm = new ScreenManager(this);
 
@@ -59,6 +51,7 @@ public class BreakAPod extends ApplicationAdapter {
 
         sm.update(Gdx.graphics.getDeltaTime());
         sm.render();
+        sb.setProjectionMatrix(hudCam.combined);
 
     }
 
