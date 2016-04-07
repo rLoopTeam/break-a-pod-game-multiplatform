@@ -2,9 +2,11 @@
 Repository for the multi platform version of the game
 
 # Requirements
-Java SDK
-Android SDK
-Android Studio
+-Java SDK
+
+-Android SDK
+
+-Android Studio
 
 Not sure what's needed for iOS
 
