@@ -1,12 +1,14 @@
 package com.mygdx.screen;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -25,20 +27,15 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.entities.HUD;
-import com.mygdx.entities.Pair;
 import com.mygdx.entities.Player;
 import com.mygdx.entities.PowerPickup;
+import com.mygdx.handlers.Background;
 import com.mygdx.handlers.GameContactListener;
 import com.mygdx.handlers.GameInput;
 import com.mygdx.handlers.B2DVars;
 import com.mygdx.rloop.BreakAPod;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
 public class Play extends GameScreen {
 
@@ -52,13 +49,13 @@ public class Play extends GameScreen {
     private GameContactListener cl;
 
     private TiledMap tiledMap;
-    private Iterator objectsIt;
     private float tileSize;
     private OrthogonalTiledMapRenderer tmr;
 
     private Player player;
     private Array<PowerPickup> powerPickups;
 
+    private Background[] backgrounds;
     private HUD hud;
 
     public Play(ScreenManager sm){
@@ -80,7 +77,7 @@ public class Play extends GameScreen {
         // create player
         createPlayer();
 
-        // create player
+        // create tiles
         createTiles();
 
         // create power pickups
@@ -106,6 +103,10 @@ public class Play extends GameScreen {
             System.out.println("x");
         }
 
+        if(GameInput.isPressed(GameInput.ESC)) {
+            Gdx.app.exit();
+        }
+
     }
 
     public void update(float dt){
@@ -116,14 +117,9 @@ public class Play extends GameScreen {
         world.step(BreakAPod.STEP, 6, 1);
 
         // update map
-        while(objectsIt.hasNext()){
-            ((Pair)objectsIt.next()).getKey();
-            ((Pair)objectsIt.next()).getValue();
-        }
 
         // remove powerups (must be after the world has updated)
         Array<Body> bodies = cl.getBodiesToRemove();
-
         for (int i = 0; i < bodies.size; i++) {
             Body b = bodies.get(i);
             powerPickups.removeValue((PowerPickup) b.getUserData(), true);
@@ -138,7 +134,7 @@ public class Play extends GameScreen {
             powerPickups.get(i).update(dt);
         }
     }
-
+    int test = 0;
     public void render(){
 
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -151,11 +147,16 @@ public class Play extends GameScreen {
         );
         cam.update();
 
-        // draw tilemap
+//        tmr.setView(cam);
+//        tmr.render();
 
 
-        tmr.setView(cam);
-        tmr.render();
+        // draw bgs
+        sb.setProjectionMatrix(hudCam.combined);
+        for (int i = 0; i < backgrounds.length; i++) {
+            if(backgrounds[i] != null)
+                backgrounds[i].render(sb);
+        }
 
         // draw player
         sb.setProjectionMatrix(cam.combined);
@@ -184,21 +185,41 @@ public class Play extends GameScreen {
     }
 
     private void createBackground() {
-        List objects = new ArrayList();
-        Iterator<MapLayer> layers = tiledMap.getLayers().iterator();
-        while(layers.hasNext()) {
-            Iterator<MapObject> lObjs = layers.next().getObjects().iterator();
-            while(lObjs.hasNext()) {
-                Map<String, Object> propertyMap = new HashMap<String, Object>();
-                Pair pair = new Pair(lObjs.next(), propertyMap);
-                objects.add(pair);
+        // create backgrounds
+//        90  		Texture bgs = Game.res.getTexture("bgs");
+//        91  		TextureRegion sky = new TextureRegion(bgs, 0, 0, 320, 240);
+//        92  		TextureRegion clouds = new TextureRegion(bgs, 0, 240, 320, 240);
+//        93  		TextureRegion mountains = new TextureRegion(bgs, 0, 480, 320, 240);
+//        94: 		backgrounds = new Background[3];
+//        95: 		backgrounds[0] = new Background(sky, cam, 0f);
+//        96: 		backgrounds[1] = new Background(clouds, cam, 0.1f);
+//        97: 		backgrounds[2] = new Background(mountains, cam, 0.2f);
+
+        MapLayers tiledLayers = tiledMap.getLayers();
+        backgrounds = new Background[tiledLayers.getCount()];
+
+        for (int i = 0; i < tiledLayers.getCount(); i++) {
+            MapLayer cLayer = tiledLayers.get(i);
+            Iterator<MapObject> objs = cLayer.getObjects().iterator();
+            if (objs.hasNext()) {
+                MapObject obj = objs.next();
+                MapProperties properties = obj.getProperties();
+                Float x = Float.parseFloat(properties.get("X", "0", String.class));
+                Float y = BreakAPod.HEIGHT - Float.parseFloat(properties.get("Y", "0", String.class));
+                Float parallax = Float.parseFloat(properties.get("parallax", "0", String.class));
+                Boolean repeatX = Boolean.parseBoolean(properties.get("repeatX", "false", String.class));
+                System.out.printf("%s - X: %s, Y: %s, Par: %s, Rep: %s\n", i, x, y, parallax, repeatX);
+
+                if (repeatX) {
+                    backgrounds[i] = new Background(((TextureMapObject)obj).getTextureRegion(), hudCam, x, y, parallax, repeatX, false);
+                } else {
+                    backgrounds[i] = new Background(((TextureMapObject)obj).getTextureRegion(), hudCam, x, y, parallax);
+                }
             }
         }
-        objectsIt = objects.iterator();
     }
 
     private void createPlayer() {
-
         //// PLAYER
         BodyDef bdef = new BodyDef();
         FixtureDef fdef = new FixtureDef();
@@ -232,58 +253,81 @@ public class Play extends GameScreen {
     }
 
     private void createTiles() {
-
         tmr = new OrthogonalTiledMapRenderer(tiledMap);
-        tileSize = (int) tiledMap.getProperties().get("tilewidth", Integer.class);
-
-        TiledMapTileLayer layer;
-
-        layer = (TiledMapTileLayer) tiledMap.getLayers().get("ground");
-        createLayer(layer, B2DVars.BIT_TUBE);
+        tileSize = 48;
+        createLayer(B2DVars.BIT_TUBE);
     }
 
-    private void createLayer(TiledMapTileLayer layer, short bits) {
+    private void createLayer( short bits) {
 
 
         BodyDef bdef = new BodyDef();
         FixtureDef fdef = new FixtureDef();
 
-        // generate tiles from the cells in the layer
-        for(int row = 0; row < layer.getTileHeight(); row++) {
-            for(int col = 0; col < layer.getWidth(); col++) {
-                // get cell
-                Cell cell = layer.getCell(col, row);
+        for(int col = 0; col < 10; col++) {
 
-                // check if exists
-                if (cell == null) continue;
-                if (cell.getTile() == null) continue;
+            bdef.type = BodyType.StaticBody;
+            bdef.position.set(
+                    (col + 0.5f) * 50 / B2DVars.PPM,
+                    100 / B2DVars.PPM
+            );
 
-                bdef.type = BodyType.StaticBody;
-                bdef.position.set(
-                        (col + 0.5f) * tileSize / B2DVars.PPM,
-                        (row + 0.5f) * tileSize / B2DVars.PPM
-                );
+            ChainShape cs = new ChainShape();
+            Vector2[] v = new Vector2[3];
+            v[0] = new Vector2(
+                    -tileSize / 2 / B2DVars.PPM, -tileSize / 2 / B2DVars.PPM);
+            v[1] = new Vector2(
+                    -tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
+            v[2] = new Vector2(
+                    tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
+            cs.createChain(v);
+            fdef.friction = 0;
+            fdef.shape = cs;
+            fdef.filter.categoryBits = bits;
+            fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+            fdef.isSensor = false;
+            world.createBody(bdef).createFixture(fdef);
 
-                ChainShape cs = new ChainShape();
-                Vector2[] v = new Vector2[3];
-                v[0] = new Vector2(
-                        -tileSize / 2 / B2DVars.PPM, -tileSize / 2 / B2DVars.PPM);
-                v[1] = new Vector2(
-                        -tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
-                v[2] = new Vector2(
-                        tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
-                cs.createChain(v);
-                fdef.friction = 0;
-                fdef.shape = cs;
-                fdef.filter.categoryBits = bits;
-                fdef.filter.maskBits = B2DVars.BIT_PLAYER;
-                fdef.isSensor = false;
-                world.createBody(bdef).createFixture(fdef);
+            cs.dispose();
 
-                cs.dispose();
-
-            }
         }
+
+        // generate tiles from the cells in the layer
+//        for(int row = 0; row < layer.getTileHeight(); row++) {
+//            for(int col = 0; col < layer.getWidth(); col++) {
+//                // get cell
+//                Cell cell = layer.getCell(col, row);
+//
+//                // check if exists
+//                if (cell == null) continue;
+//                if (cell.getTile() == null) continue;
+//
+//                bdef.type = BodyType.StaticBody;
+//                bdef.position.set(
+//                        (col + 0.5f) * tileSize / B2DVars.PPM,
+//                        (row + 0.5f) * tileSize / B2DVars.PPM
+//                );
+//
+//                ChainShape cs = new ChainShape();
+//                Vector2[] v = new Vector2[3];
+//                v[0] = new Vector2(
+//                        -tileSize / 2 / B2DVars.PPM, -tileSize / 2 / B2DVars.PPM);
+//                v[1] = new Vector2(
+//                        -tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
+//                v[2] = new Vector2(
+//                        tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
+//                cs.createChain(v);
+//                fdef.friction = 0;
+//                fdef.shape = cs;
+//                fdef.filter.categoryBits = bits;
+//                fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+//                fdef.isSensor = false;
+//                world.createBody(bdef).createFixture(fdef);
+//
+//                cs.dispose();
+//
+//            }
+//        }
 
     }
 

@@ -1,26 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="13" tilewidth="48" tileheight="48" nextobjectid="4">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="13" tilewidth="48" tileheight="48" nextobjectid="12">
  <tileset firstgid="1" name="ground" tilewidth="48" tileheight="48" tilecount="6" columns="6">
+  <tileoffset x="500" y="60"/>
   <image source="night_grass/night_grass.png" width="288" height="48"/>
  </tileset>
- <imagelayer name="background">
-  <image source="night_grass/night_sky.png" width="800" height="600"/>
-  <properties>
-   <property name="fixedToCamera" type="bool" value="true"/>
-  </properties>
- </imagelayer>
- <layer name="ground" width="40" height="13">
-  <properties>
-   <property name="repeat" type="bool" value="true"/>
-  </properties>
-  <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMAqGH2AEYiYgZgZiFiBmBWI2MsRHKgAATbAAQA==
-  </data>
- </layer>
- <imagelayer name="skylight">
-  <image source="night_grass/moon.png" width="120" height="120"/>
-  <properties>
-   <property name="fixedToCamera" type="bool" value="true"/>
-  </properties>
- </imagelayer>
+ <tileset firstgid="7" name="images" tilewidth="800" tileheight="600" tilecount="3" columns="3">
+  <tileoffset x="-350" y="-89"/>
+  <terraintypes>
+   <terrain name="New Terrain" tile="-1"/>
+  </terraintypes>
+  <tile id="0">
+   <image width="120" height="120" source="night_grass/moon.png"/>
+  </tile>
+  <tile id="1">
+   <image width="288" height="48" source="night_grass/night_grass.png"/>
+  </tile>
+  <tile id="2">
+   <image width="800" height="600" source="night_grass/night_sky.png"/>
+  </tile>
+ </tileset>
+ <objectgroup name="background">
+  <object id="11" gid="9" x="0" y="600" width="800" height="600">
+   <properties>
+    <property name="X" type="float" value="0"/>
+    <property name="Y" type="float" value="600"/>
+    <property name="parallax" type="float" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="skylight">
+  <object id="10" gid="7" x="502" y="209" width="120" height="120">
+   <properties>
+    <property name="X" type="float" value="502"/>
+    <property name="Y" type="float" value="209"/>
+    <property name="parallax" type="float" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="ground">
+  <object id="9" gid="8" x="0" y="560" width="288" height="48">
+   <properties>
+    <property name="X" type="float" value="0"/>
+    <property name="Y" type="float" value="560"/>
+    <property name="parallax" type="float" value="1"/>
+    <property name="repeatX" type="bool" value="false"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

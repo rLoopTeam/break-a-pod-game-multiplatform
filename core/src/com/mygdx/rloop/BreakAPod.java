@@ -16,7 +16,7 @@ public class BreakAPod extends ApplicationAdapter {
     public static final int SCALE = 1;
     public static final float STEP = 1 / 60f;
 
-    public static final int PLAYER_SPEED = 4;
+    public static final int PLAYER_SPEED = 1;
 
     private SpriteBatch sb;
     private OrthographicCamera cam;
@@ -32,9 +32,16 @@ public class BreakAPod extends ApplicationAdapter {
         Gdx.input.setInputProcessor(new GameInputProcessor());
 
         res = new Content();
+
+        // elements
         res.loadTexture("rPod.png", "pod");
         res.loadTexture("power_pickup.png", "powerpickup");
         res.loadTexture("UI/UI_atlas.png", "hud");
+
+        // environments
+        res.loadTexture("environments/night_grass/night_grass_atlas.png", "night_grass");
+        res.loadAtlas("environments/night_grass/night_grass_atlas.json", "night_grass");
+
 
         sb = new SpriteBatch();
         cam = new OrthographicCamera();
