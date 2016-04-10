@@ -27,8 +27,8 @@ public class Background {
         this.repeat = (repeatX || repeatY);
         this.x = x;
         this.y = y;
-        numDrawX = (repeatX) ? BreakAPod.WIDTH / image.getRegionWidth() + 1 : 1;
-        numDrawY = (repeatY) ? BreakAPod.HEIGHT / image.getRegionHeight() + 1 : 1;
+        numDrawX = (repeatX) ? BreakAPod.WIDTH / image.getRegionWidth() + 3 : 1;
+        numDrawY = (repeatY) ? BreakAPod.HEIGHT / image.getRegionHeight() + 3 : 1;
     }
 
     public Background(TextureRegion image, OrthographicCamera gameCam, float x, float y, float scale) {
@@ -66,7 +66,6 @@ public class Background {
     }
 
     public void render(SpriteBatch sb) {
-//        System.out.println("===========");
         float x;
         float y;
 
