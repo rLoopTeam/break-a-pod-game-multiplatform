@@ -43,7 +43,7 @@
     <property name="X" type="float" value="0"/>
     <property name="Y" type="float" value="560"/>
     <property name="parallax" type="float" value="1"/>
-    <property name="repeatX" type="bool" value="false"/>
+    <property name="repeatX" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>

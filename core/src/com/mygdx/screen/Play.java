@@ -83,12 +83,12 @@ public class Play extends GameScreen {
         // create power pickups
         createPowerPickups();
 
+        // set hud
+        hud = new HUD(player);
+
         // set up box2d cam
         b2dCam = new OrthographicCamera();
         b2dCam.setToOrtho(false, BreakAPod.WIDTH / B2DVars.PPM, BreakAPod.HEIGHT / B2DVars.PPM);
-
-        // set hud
-        hud = new HUD(player);
 
     }
 
@@ -130,11 +130,12 @@ public class Play extends GameScreen {
 
         player.update(dt);
 
+        // pickups
         for (int i = 0; i < powerPickups.size; i++) {
             powerPickups.get(i).update(dt);
         }
     }
-    int test = 0;
+
     public void render(){
 
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -150,12 +151,12 @@ public class Play extends GameScreen {
 //        tmr.setView(cam);
 //        tmr.render();
 
-
         // draw bgs
         sb.setProjectionMatrix(hudCam.combined);
         for (int i = 0; i < backgrounds.length; i++) {
-            if(backgrounds[i] != null)
+            if(backgrounds[i] != null) {
                 backgrounds[i].render(sb);
+            }
         }
 
         // draw player
@@ -185,15 +186,6 @@ public class Play extends GameScreen {
     }
 
     private void createBackground() {
-        // create backgrounds
-//        90  		Texture bgs = Game.res.getTexture("bgs");
-//        91  		TextureRegion sky = new TextureRegion(bgs, 0, 0, 320, 240);
-//        92  		TextureRegion clouds = new TextureRegion(bgs, 0, 240, 320, 240);
-//        93  		TextureRegion mountains = new TextureRegion(bgs, 0, 480, 320, 240);
-//        94: 		backgrounds = new Background[3];
-//        95: 		backgrounds[0] = new Background(sky, cam, 0f);
-//        96: 		backgrounds[1] = new Background(clouds, cam, 0.1f);
-//        97: 		backgrounds[2] = new Background(mountains, cam, 0.2f);
 
         MapLayers tiledLayers = tiledMap.getLayers();
         backgrounds = new Background[tiledLayers.getCount()];
@@ -211,9 +203,9 @@ public class Play extends GameScreen {
                 System.out.printf("%s - X: %s, Y: %s, Par: %s, Rep: %s\n", i, x, y, parallax, repeatX);
 
                 if (repeatX) {
-                    backgrounds[i] = new Background(((TextureMapObject)obj).getTextureRegion(), hudCam, x, y, parallax, repeatX, false);
+                    backgrounds[i] = new Background(((TextureMapObject)obj).getTextureRegion(), cam, x, y, parallax, repeatX, false);
                 } else {
-                    backgrounds[i] = new Background(((TextureMapObject)obj).getTextureRegion(), hudCam, x, y, parallax);
+                    backgrounds[i] = new Background(((TextureMapObject)obj).getTextureRegion(), cam, x, y, parallax);
                 }
             }
         }

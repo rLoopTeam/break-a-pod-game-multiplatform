@@ -58,13 +58,11 @@ public class BreakAPod extends ApplicationAdapter {
 
         sm.update(Gdx.graphics.getDeltaTime());
         sm.render();
-        sb.setProjectionMatrix(hudCam.combined);
 
     }
 
     @Override
     public void dispose () {
-
 
     }
 
