@@ -29,6 +29,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.entities.HUD;
 import com.mygdx.entities.Player;
 import com.mygdx.entities.PowerPickup;
+import com.mygdx.entities.Tube;
 import com.mygdx.handlers.Background;
 import com.mygdx.handlers.GameContactListener;
 import com.mygdx.handlers.GameInput;
@@ -49,18 +50,23 @@ public class Play extends GameScreen {
     private GameContactListener cl;
 
     private TiledMap tiledMap;
-    private float tileSize;
     private OrthogonalTiledMapRenderer tmr;
 
     private Player player;
     private Array<PowerPickup> powerPickups;
 
     private Background[] backgrounds;
+    private Tube tube;
+    private Vector2 playerStart;
+    private float tubeWidth;
     private HUD hud;
 
     public Play(ScreenManager sm){
 
         super(sm);
+
+        // initial settings
+        playerStart = new Vector2(0f, 420f); // needs to be 150y or the pod isn't visible
 
         //box2d stuff
         world = new World(new Vector2(0, -9.8f), true);
@@ -77,8 +83,9 @@ public class Play extends GameScreen {
         // create player
         createPlayer();
 
-        // create tiles
-        createTiles();
+        // create tube
+        tubeWidth = 200f;
+        createTube(); // probly need to combine this with the background creation so it is in the correct order
 
         // create power pickups
         createPowerPickups();
@@ -161,7 +168,10 @@ public class Play extends GameScreen {
 
         // draw player
         sb.setProjectionMatrix(cam.combined);
+        //tube.render(sb, player); // pass the player in the tube render function so we can sort the rendering order
         player.render(sb);
+        System.out.println("Cam pos:");
+        System.out.println(cam.position);
 
         for (int i = 0; i < powerPickups.size; i++) {
             powerPickups.get(i).render(sb);
@@ -200,7 +210,6 @@ public class Play extends GameScreen {
                 Float y = BreakAPod.HEIGHT - Float.parseFloat(properties.get("Y", "0", String.class));
                 Float parallax = Float.parseFloat(properties.get("parallax", "0", String.class));
                 Boolean repeatX = Boolean.parseBoolean(properties.get("repeatX", "false", String.class));
-                System.out.printf("%s - X: %s, Y: %s, Par: %s, Rep: %s\n", i, x, y, parallax, repeatX);
 
                 if (repeatX) {
                     backgrounds[i] = new Background(((TextureMapObject)obj).getTextureRegion(), cam, x, y, parallax, repeatX, false);
@@ -217,7 +226,7 @@ public class Play extends GameScreen {
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
 
-        bdef.position.set(160 / B2DVars.PPM, 200 / B2DVars.PPM);
+        bdef.position.set(playerStart.x / B2DVars.PPM, playerStart.y / B2DVars.PPM);
         bdef.type = BodyType.DynamicBody;
         bdef.linearVelocity.set(BreakAPod.PLAYER_SPEED, 0);
         Body body = world.createBody(bdef);
@@ -244,7 +253,11 @@ public class Play extends GameScreen {
         shape.dispose();
     }
 
-    private void createTiles() {
+    private void createTube() {
+        tube = new Tube(world, playerStart.x / B2DVars.PPM, playerStart.y / B2DVars.PPM, tubeWidth / B2DVars.PPM);
+    }
+
+    /*private void createTiles() {
         tmr = new OrthogonalTiledMapRenderer(tiledMap);
         tileSize = 48;
         createLayer(B2DVars.BIT_TUBE);
@@ -282,7 +295,7 @@ public class Play extends GameScreen {
 
             cs.dispose();
 
-        }
+        }*/
 
         // generate tiles from the cells in the layer
 //        for(int row = 0; row < layer.getTileHeight(); row++) {
@@ -320,8 +333,7 @@ public class Play extends GameScreen {
 //
 //            }
 //        }
-
-    }
+//    }
 
     private void createPowerPickups() {
 
