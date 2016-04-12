@@ -9,10 +9,15 @@ public class Player extends B2DSprite{
 
     private int power;
     private int totalPower;
+    private int health;
 
     public Player(Body body) {
 
         super(body);
+
+        // player settings
+        this.power = BreakAPod.PLAYER_POWER;
+        this.health = BreakAPod.PLAYER_HEALTH;
 
         Texture tex = BreakAPod.res.getTexture("pod");
         TextureRegion[] sprites = TextureRegion.split(tex, tex.getWidth(), tex.getHeight()/2)[0];
@@ -25,7 +30,9 @@ public class Player extends B2DSprite{
     public int getPower() { return power; }
     public void setTotalPower(int i) { power = i; }
     public int getTotalPower() { return totalPower; }
-
+    public void setHealth(int i) { health = i; }
+    public int getHealth() { return this.health; }
+    public void decrementHealth() { health--; }
 }
 
 

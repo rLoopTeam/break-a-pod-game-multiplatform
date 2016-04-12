@@ -3,6 +3,7 @@ package com.mygdx.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.JsonReader;
@@ -14,10 +15,12 @@ public class HUD {
 
     private  Player player;
     private TextureRegion[] elements;
+    private BitmapFont font;
 
-    public HUD(Player player) {
+    public HUD(Player player, BitmapFont font) {
 
         this.player = player;
+        this.font = font;
         Texture hudtextureatlas = BreakAPod.res.getTexture("hud");
 
         FileHandle handle = Gdx.files.internal("UI/UI_atlas.json");
@@ -33,7 +36,8 @@ public class HUD {
 
         sb.begin();
         sb.draw(elements[0], 0, BreakAPod.HEIGHT - elements[0].getRegionHeight()); //top UI
-        sb.draw(elements[1], 0, elements[1].getRegionHeight() -80); //bottom UI
+        sb.draw(elements[1], 0, elements[1].getRegionHeight() - 80); //bottom UI
+        font.draw(sb, Integer.toString(player.getHealth())+"HP", 0f, (float)BreakAPod.HEIGHT - 100);
         sb.end();
 
     }

@@ -17,6 +17,8 @@ public class BreakAPod extends ApplicationAdapter {
     public static final float STEP = 1 / 60f;
 
     public static final int PLAYER_SPEED = 1;
+    public static final int PLAYER_POWER = 100;
+    public static final int PLAYER_HEALTH = 100;
 
     private SpriteBatch sb;
     private OrthographicCamera cam;
@@ -36,7 +38,10 @@ public class BreakAPod extends ApplicationAdapter {
         // elements
         res.loadTexture("rPod.png", "pod");
         res.loadTexture("power_pickup.png", "powerpickup");
+
+        // UI
         res.loadTexture("UI/UI_atlas.png", "hud");
+        res.loadFont("UI/fonts/font.fnt", "default_font");
 
         // environments
         res.loadTexture("environments/night_grass/night_grass_atlas.png", "night_grass");

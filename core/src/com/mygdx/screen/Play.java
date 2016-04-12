@@ -68,6 +68,9 @@ public class Play extends GameScreen {
         // initial settings
         playerStart = new Vector2(0f, 420f); // needs to be 150y or the pod isn't visible
 
+        // font
+        font = BreakAPod.res.getFont("default_font");
+
         //box2d stuff
         world = new World(new Vector2(0, -9.8f), true);
         cl = new GameContactListener();
@@ -91,7 +94,7 @@ public class Play extends GameScreen {
         createPowerPickups();
 
         // set hud
-        hud = new HUD(player);
+        hud = new HUD(player, font);
 
         // set up box2d cam
         b2dCam = new OrthographicCamera();
@@ -133,6 +136,7 @@ public class Play extends GameScreen {
             world.destroyBody(b);
             player.collectPower();
         }
+
         bodies.clear();
 
         player.update(dt);
@@ -168,10 +172,8 @@ public class Play extends GameScreen {
 
         // draw player
         sb.setProjectionMatrix(cam.combined);
-        //tube.render(sb, player); // pass the player in the tube render function so we can sort the rendering order
-        player.render(sb);
-        System.out.println("Cam pos:");
-        System.out.println(cam.position);
+        tube.render(sb, player); // pass the player in the tube render function so we can sort the rendering order
+        //player.render(sb);
 
         for (int i = 0; i < powerPickups.size; i++) {
             powerPickups.get(i).render(sb);
@@ -180,6 +182,7 @@ public class Play extends GameScreen {
         // draw hud
         sb.setProjectionMatrix(hudCam.combined);
         hud.render(sb);
+
 
         if(debug) {
             b2dCam.position.set(
@@ -254,7 +257,7 @@ public class Play extends GameScreen {
     }
 
     private void createTube() {
-        tube = new Tube(world, playerStart.x / B2DVars.PPM, playerStart.y / B2DVars.PPM, tubeWidth / B2DVars.PPM);
+        tube = new Tube(world, cam, 0, 200, tubeWidth / B2DVars.PPM);
     }
 
     /*private void createTiles() {
