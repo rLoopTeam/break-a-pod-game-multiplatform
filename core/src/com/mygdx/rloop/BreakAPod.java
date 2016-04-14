@@ -16,6 +16,8 @@ public class BreakAPod extends ApplicationAdapter {
     public static final int SCALE = 1;
     public static final float STEP = 1 / 60f;
 
+    public static final int LEVEL_START_LENGTH = 1000;
+
     public static final int PLAYER_SPEED = 1;
     public static final int PLAYER_POWER = 100;
     public static final int PLAYER_HEALTH = 100;

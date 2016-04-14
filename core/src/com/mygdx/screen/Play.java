@@ -124,7 +124,7 @@ public class Play extends GameScreen {
         handleInput();
 
         // update box2d
-        world.step(BreakAPod.STEP, 6, 1);
+        world.step(BreakAPod.STEP, 6, 2);
 
         // update map
 
@@ -229,10 +229,11 @@ public class Play extends GameScreen {
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
 
-        bdef.position.set(playerStart.x / B2DVars.PPM, playerStart.y / B2DVars.PPM);
+        bdef.position.set(playerStart.x - 100 / B2DVars.PPM, playerStart.y / B2DVars.PPM);
         bdef.type = BodyType.DynamicBody;
-        bdef.linearVelocity.set(BreakAPod.PLAYER_SPEED, 0);
+        //bdef.linearVelocity.set(BreakAPod.PLAYER_SPEED, 0); // dont use this because it makes the thing not react to physics properly
         Body body = world.createBody(bdef);
+
 
         // create player
         player = new Player(body);
@@ -242,7 +243,9 @@ public class Play extends GameScreen {
         fdef.shape = shape;
         fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
         fdef.filter.maskBits = B2DVars.BIT_TUBE | B2DVars.BIT_PICKUP;
+        fdef.density = 1f;
         body.createFixture(fdef).setUserData("player");
+
 
         // create foot sensor
         shape.setAsBox(player.getWidth() / 2 / B2DVars.PPM, 4 / B2DVars.PPM, new Vector2(0, -(player.getHeight() + 2) / 2 / B2DVars.PPM), 0);
@@ -260,83 +263,7 @@ public class Play extends GameScreen {
         tube = new Tube(world, cam, 0, 200, tubeWidth / B2DVars.PPM);
     }
 
-    /*private void createTiles() {
-        tmr = new OrthogonalTiledMapRenderer(tiledMap);
-        tileSize = 48;
-        createLayer(B2DVars.BIT_TUBE);
-    }
 
-    private void createLayer( short bits) {
-
-
-        BodyDef bdef = new BodyDef();
-        FixtureDef fdef = new FixtureDef();
-
-        for(int col = 0; col < 10; col++) {
-
-            bdef.type = BodyType.StaticBody;
-            bdef.position.set(
-                    (col + 0.5f) * 50 / B2DVars.PPM,
-                    100 / B2DVars.PPM
-            );
-
-            ChainShape cs = new ChainShape();
-            Vector2[] v = new Vector2[3];
-            v[0] = new Vector2(
-                    -tileSize / 2 / B2DVars.PPM, -tileSize / 2 / B2DVars.PPM);
-            v[1] = new Vector2(
-                    -tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
-            v[2] = new Vector2(
-                    tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
-            cs.createChain(v);
-            fdef.friction = 0;
-            fdef.shape = cs;
-            fdef.filter.categoryBits = bits;
-            fdef.filter.maskBits = B2DVars.BIT_PLAYER;
-            fdef.isSensor = false;
-            world.createBody(bdef).createFixture(fdef);
-
-            cs.dispose();
-
-        }*/
-
-        // generate tiles from the cells in the layer
-//        for(int row = 0; row < layer.getTileHeight(); row++) {
-//            for(int col = 0; col < layer.getWidth(); col++) {
-//                // get cell
-//                Cell cell = layer.getCell(col, row);
-//
-//                // check if exists
-//                if (cell == null) continue;
-//                if (cell.getTile() == null) continue;
-//
-//                bdef.type = BodyType.StaticBody;
-//                bdef.position.set(
-//                        (col + 0.5f) * tileSize / B2DVars.PPM,
-//                        (row + 0.5f) * tileSize / B2DVars.PPM
-//                );
-//
-//                ChainShape cs = new ChainShape();
-//                Vector2[] v = new Vector2[3];
-//                v[0] = new Vector2(
-//                        -tileSize / 2 / B2DVars.PPM, -tileSize / 2 / B2DVars.PPM);
-//                v[1] = new Vector2(
-//                        -tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
-//                v[2] = new Vector2(
-//                        tileSize / 2 / B2DVars.PPM, tileSize / 2 / B2DVars.PPM);
-//                cs.createChain(v);
-//                fdef.friction = 0;
-//                fdef.shape = cs;
-//                fdef.filter.categoryBits = bits;
-//                fdef.filter.maskBits = B2DVars.BIT_PLAYER;
-//                fdef.isSensor = false;
-//                world.createBody(bdef).createFixture(fdef);
-//
-//                cs.dispose();
-//
-//            }
-//        }
-//    }
 
     private void createPowerPickups() {
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.mygdx.handlers.B2DVars;
 import com.mygdx.rloop.BreakAPod;
 
 
@@ -37,7 +38,7 @@ public class HUD {
         sb.begin();
         sb.draw(elements[0], 0, BreakAPod.HEIGHT - elements[0].getRegionHeight()); //top UI
         sb.draw(elements[1], 0, elements[1].getRegionHeight() - 80); //bottom UI
-        font.draw(sb, Integer.toString(player.getHealth())+"HP", 0f, (float)BreakAPod.HEIGHT - 100);
+        font.draw(sb, Float.toString(player.getPosition().x * B2DVars.PPM), 0f, (float)BreakAPod.HEIGHT - 100);
         sb.end();
 
     }

@@ -15,11 +15,12 @@ public class Tube {
     private float x;
     private float y;
     private float w;
+    private float tubeLength = BreakAPod.LEVEL_START_LENGTH;
     private float startLength;
     private float endLength;
 
     private Section[] sections;
-    private float res;
+    private float step = 50;
     private float sectionLength;
 
     private World world;
@@ -27,6 +28,7 @@ public class Tube {
 
     BodyDef bdef;
     FixtureDef fdef;
+    Vector2[] v;
 
     public Tube(World world, OrthographicCamera gameCam, float x, float y, float w) {
         this.gameCam = gameCam;
@@ -61,8 +63,12 @@ public class Tube {
         player.render(sb);
 
         sb.begin();
+
         sb.end();
     }
+
+
+
 
     private void initialise() {
         float x = this.x;
@@ -71,16 +77,17 @@ public class Tube {
         bdef = new BodyDef();
         fdef = new FixtureDef();
 
-        //sectionLength = startLength / 3f;
-        sectionLength = 50f;
+        sectionLength = (tubeLength + startLength + endLength) / step;
+        System.out.println(sectionLength);
+        sectionLength = step;
 
-        Vector2[] v = new Vector2[3];
+        v = new Vector2[3];
         v[0] = new Vector2(
-                -sectionLength / B2DVars.PPM, -sectionLength / B2DVars.PPM);
+                -sectionLength / B2DVars.PPM, -25 / B2DVars.PPM);
         v[1] = new Vector2(
-                -sectionLength / B2DVars.PPM, sectionLength / B2DVars.PPM);
+                -sectionLength / B2DVars.PPM, 25 / B2DVars.PPM);
         v[2] = new Vector2(
-                sectionLength / B2DVars.PPM, sectionLength / B2DVars.PPM);
+                sectionLength / B2DVars.PPM, 25 / B2DVars.PPM);
 
         for(int point = 0; point < 10; point++) {
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -98,35 +105,6 @@ public class Tube {
             world.createBody(bdef).createFixture(fdef);
             cs.dispose();
         }
-
-
-
-//        for(int point = 0; point < totalPoints; point++) {
-//
-//            bdef.type = BodyDef.BodyType.StaticBody;
-//            bdef.position.set(
-//                    (point + 0.5f) * sectionLength / B2DVars.PPM,
-//                    w / B2DVars.PPM
-//            );
-//
-//            ChainShape cs = new ChainShape();
-//            Vector2[] v = new Vector2[3];
-//            v[0] = new Vector2(
-//                    -sectionLength / 2 / B2DVars.PPM, -sectionLength / 2 / B2DVars.PPM);
-//            v[1] = new Vector2(
-//                    -sectionLength / 2 / B2DVars.PPM, sectionLength / 2 / B2DVars.PPM);
-//            v[2] = new Vector2(
-//                    sectionLength / 2 / B2DVars.PPM, sectionLength / 2 / B2DVars.PPM);
-//            cs.createChain(v);
-//            fdef.friction = 0;
-//            fdef.shape = cs;
-//            fdef.filter.categoryBits = B2DVars.BIT_TUBE;
-//            fdef.filter.maskBits = B2DVars.BIT_PLAYER;
-//            fdef.isSensor = false;
-//            world.createBody(bdef).createFixture(fdef);
-//
-//            cs.dispose();
-//        }
     }
 }
 
