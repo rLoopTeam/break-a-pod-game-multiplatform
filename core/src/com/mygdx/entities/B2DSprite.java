@@ -41,7 +41,17 @@ public class B2DSprite {
 //                null,
 //                15f
 //        );
-        sb.draw(animation.getFrame(), body.getPosition().x * B2DVars.PPM - width / 2, body.getPosition().y * B2DVars.PPM - height / 2, 0, 0, width, height, 1, 1, body.getAngle());
+        System.out.println(body.getAngle());
+        sb.draw(animation.getFrame(),
+                body.getPosition().x * B2DVars.PPM - width / 2,
+                body.getPosition().y * B2DVars.PPM - height / 2,
+                0,
+                0,
+                width,
+                height,
+                1,
+                1,
+                (float)Math.toDegrees(body.getAngle()));
         sb.end();
     }
 
